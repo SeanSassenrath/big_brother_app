@@ -5,6 +5,12 @@ var bodyParser    = require('body-parser');
 var mongoose      = require('mongoose');
 var port          = process.env.PORT || 1337
 
+var flash         = require('connect-flash');
+var cookieParser  = require('cookie-parser');
+var session       = require('express-session')
+
+// mongoose.connect('mongodb://localhost:1337/bigbrotherapp')
+
 // Configuration
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -27,14 +33,14 @@ app.get('/', function(req, res) {
 });
 
 // User Routes
-var userRouter = express.Router();
+var apiRouter = express.Router();
 
-userRouter.get('/', function(req, res) {
+apiRouter.get('/', function(req, res) {
   res.json({ message: 'Testing User Routes' });
 });
 
 // Register Routes
-app.use('/users', userRouter);
+app.use('/api', apiRouter);
 
 // Start Server
 app.listen(port);
