@@ -9,7 +9,7 @@ var flash         = require('connect-flash');
 var cookieParser  = require('cookie-parser');
 var session       = require('express-session')
 
-// mongoose.connect('mongodb://localhost:1337/bigbrotherapp')
+mongoose.connect('mongodb://localhost:1337/bigbrotherapp')
 
 // Configure Passport
 require('./config/passport')(passport);
@@ -36,20 +36,21 @@ app.use(passport.session());
 app.use(flash());
 
 // Routes
+require('./app/routes/routes.js')(app, passport)
 
-app.get('/', function(req, res) {
-  res.send('Fantasy Big Brother Home Page')
-});
+// app.get('/', function(req, res) {
+//   res.send('Fantasy Big Brother Home Page')
+// });
 
-// User Routes
-var apiRouter = express.Router();
+// // User Routes
+// var apiRouter = express.Router();
 
-apiRouter.get('/', function(req, res) {
-  res.json({ message: 'Testing User Routes' });
-});
+// apiRouter.get('/', function(req, res) {
+//   res.json({ message: 'Testing User Routes' });
+// });
 
-// Register Routes
-app.use('/api', apiRouter);
+// // Register Routes
+// app.use('/api', apiRouter);
 
 // Start Server
 app.listen(port);
