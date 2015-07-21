@@ -11,6 +11,9 @@ var session       = require('express-session')
 
 // mongoose.connect('mongodb://localhost:1337/bigbrotherapp')
 
+// Configure Passport
+require('./config/passport')(passport);
+
 // Configuration
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -25,6 +28,12 @@ app.use(function(req, res, next) {
 
 // Log all requests to console
 app.use(morgan('dev'));
+
+// Required for Passport
+app.use(session({ secret: 'theskyisblue' }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
 
 // Routes
 
