@@ -5,11 +5,12 @@ var bodyParser    = require('body-parser');
 var mongoose      = require('mongoose');
 var port          = process.env.PORT || 1337
 
+var passport      = require('passport')
 var flash         = require('connect-flash');
 var cookieParser  = require('cookie-parser');
 var session       = require('express-session')
 
-mongoose.connect('mongodb://localhost:1337/bigbrotherapp')
+mongoose.connect('mongodb://localhost/bigbrotherapp')
 
 // Configure Passport
 require('./config/passport')(passport);
