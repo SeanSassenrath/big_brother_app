@@ -1,6 +1,8 @@
 var express       = require('express');
 var app           = express();
+var jwt           = require('jsonwebtoken');
 var User          = require('../models/user.js');
+var secret        = require('../../config/settings.js')
 
 module.exports = function(app, passport) {
 
