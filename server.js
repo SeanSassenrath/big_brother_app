@@ -4,7 +4,7 @@ var morgan        = require('morgan');
 var bodyParser    = require('body-parser');
 var mongoose      = require('mongoose');
 var config        = require('./config/settings')
-// var port          = process.env.PORT || 1337
+var path          = require('path');
 
 var passport      = require('passport')
 var flash         = require('connect-flash');
@@ -39,6 +39,11 @@ app.use(flash());
 
 // Routes
 require('./app/routes/routes.js')(app, passport)
+
+// MAIN CATCHALL ROUTE - SEND USERS TO ANGULAR
+app.get('*', function(req, res) {
+  res.sendFile(path.join(__dirname + '/public/app/views/index.html'));
+});
 
 // Start Server
 app.listen(config.port);
