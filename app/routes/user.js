@@ -1,11 +1,14 @@
 var express       = require('express');
 var app           = express();
 var User          = require('../models/user.js');
-// var path          = require('path');
 
 module.exports = function(app, passport) {
 
   // Routes
+
+  // app.get('/', function(req, res) {
+  //   res.send('Fantasy Big Brother Home Page')
+  // });
 
   // !_!_!_! ADD LOG IN AUTH TO PROFILE ROUTE !_!_!_!
   app.get('/api/profile', function(req, res) {

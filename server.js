@@ -38,7 +38,8 @@ app.use(passport.session());
 app.use(flash());
 
 // Routes
-require('./app/routes/routes.js')(app, passport)
+require('./app/routes/player.js')(app)
+require('./app/routes/user.js')(app, passport)
 
 // MAIN CATCHALL ROUTE - SEND USERS TO ANGULAR
 app.get('*', function(req, res) {
