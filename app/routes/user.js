@@ -1,10 +1,19 @@
 var express       = require('express');
 var app           = express();
 var User          = require('../models/user.js')
+var Player        = require('../models/player.js')
 
 module.exports = function(app, passport) {
 
   // Routes
+
+  // app.get('/api/players', function(req, res) {
+  //   Player.find(function(err, users) {
+  //     if(err) res.send(err);
+
+  //     res.json(users);
+  //   });
+  // });
 
   app.get('/', function(req, res) {
     res.send('Fantasy Big Brother Home Page')
