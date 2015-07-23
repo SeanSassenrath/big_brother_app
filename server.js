@@ -17,7 +17,7 @@ mongoose.connect(config.database)
 require('./config/passport')(passport);
 
 // Configuration
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // CORS Configuration

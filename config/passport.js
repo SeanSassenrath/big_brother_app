@@ -2,6 +2,7 @@ var LocalStrategy     = require('passport-local').Strategy;
 var FacebookStrategy  = require('passport-facebook').Strategy;
 var User              = require('../app/models/user');
 var configAuth        = require('./auth');
+var BearerStrategy    = require('passport-http-bearer').Strategy;
 
 // expose this function to our server
 module.exports = function(passport) {
@@ -10,16 +11,16 @@ module.exports = function(passport) {
   // passport needs to be able to serialize and unserialize users out of session
 
   // serialize the user for the session
-  passport.serializeUser(function(user, done) {
-    done(null, user.id);
-  });
+  // passport.serializeUser(function(user, done) {
+  //   done(null, user.id);
+  // });
 
-  // deserialize the user
-  passport.deserializeUser(function(id, done) {
-    User.findById(id, function(err, user) {
-      done(err, user);
-    });
-  });
+  // // deserialize the user
+  // passport.deserializeUser(function(id, done) {
+  //   User.findById(id, function(err, user) {
+  //     done(err, user);
+  //   });
+  // });
 
   // local sign up
   passport.use('local-signup', new LocalStrategy({
@@ -44,6 +45,7 @@ module.exports = function(passport) {
 
           newUser.local.email     = email;
           newUser.local.password  = newUser.generateHash(password);
+          // newUser.profile.username = username;
 
           newUser.save(function(err) {
             if (err)
@@ -109,4 +111,26 @@ module.exports = function(passport) {
       });
     });
   }));
+
+  // bearer
+  passport.use(
+      new BearerStrategy(
+          function(token, done) {
+              User.findOne({ 'facebook.token': token }, // see if you can put this in the header and not in the url
+                  function(err, user) {
+                      if(err) {
+                        console.log('error with' + user)
+                          return done(err)
+                      }
+                      if(!user) {
+                        console.log('NO USER!!!')
+                          return done(null, false)
+                      }
+
+                      return done(null, user, { scope: 'all' })
+                  }
+              );
+          }
+      )
+  );
 };
