@@ -1,19 +1,18 @@
 var mongoose  = require('mongoose');
 var bcrypt    = require('bcrypt-nodejs');
 
-var userSchema = mongoose.Schema({
+var UserSchema = mongoose.Schema({
 
+  // need to make profile an array of objects
   profile: {
+    email: String,
     username: String,
+    password: String,
+    bio: String,
     created: {
       type: Date,
       default: Date.now
-    },
-    bio: String
-  },
-  local: {
-    email: String,
-    password: String,
+    }
   },
   facebook: {
     id: String,
@@ -32,13 +31,22 @@ var userSchema = mongoose.Schema({
 });
 
 // methods
-userSchema.methods.generateHash = function(password) {
-  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+UserSchema.pre('save', function(next) {
+  var user = this;
+
+  if(!user.isModified('profile.password')) return next();
+
+  bcrypt.hash(user.profile.password, null, null, function(err, hash) {
+    if(err) return next(err);
+    user.profile.password = hash;
+    next();
+  });
+});
+
+UserSchema.methods.comparePassword = function(password) {
+  var user = this;
+
+  return bcrypt.compareSync(password, user.profile.password);
 };
 
-// check if password is valid
-userSchema.methods.validPassword = function(password) {
-  return bcrypt.compareSync(password, this.local.password);
-};
-
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', UserSchema);

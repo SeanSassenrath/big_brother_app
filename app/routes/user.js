@@ -1,7 +1,7 @@
 var express       = require('express');
 var app           = express();
 var jwt           = require('jsonwebtoken');
-var expressJwt    = require('express-jwt')
+// var expressJwt    = require('express-jwt')
 var User          = require('../models/user.js');
 var config        = require('../../config/settings.js')
 var BearerStrategy    = require('passport-http-bearer').Strategy;
@@ -10,42 +10,11 @@ module.exports = function(app, passport) {
 
   // Routes
 
-  // app.get('/', function(req, res) {
-  //   res.send('Fantasy Big Brother Home Page')
-  // });
-  // app.use('/api', function(req, res, next) {
-  //   var token = req.body.token || req.query.token || req.headers['x-access-token'];
-
-  //   if (token) {
-  //     jwt.verify(token, config.secret, function(err, decoded) {
-  //       if(err) {
-  //         return res.status(403).send({
-  //           sucess: false,
-  //           message: 'Token auth failed'
-  //         });
-  //       } else {
-  //         req.decoded = decoded;
-  //         next();
-  //       }
-  //     });
-  //   } else {
-  //     return res.status(403).send({
-  //       success: false,
-  //       message: 'No token provided'
-  //     });
-  //   }
-  // })
-
-  app.get('/profile', passport.authenticate('bearer', { session: false }),
-    function(req, res) {
-      res.send("Logged in as " + req.user.facebook.name)
-    }
-  );
-
-  app.post('/api/authenticate', function(req, res) {
-    console.log(req.body.email)
+  // Auth Route - Providing Tokens
+  app.post('/authenticate', function(req, res) {
+    console.log(req.body.password)
     User.findOne({
-      'local.email': req.body.email
+      'profile.email': req.body.email
     }, function(err, user) {
 
       console.log('***** ' + user)
@@ -54,17 +23,19 @@ module.exports = function(app, passport) {
       if(!user) {
         res.json({ success: false, message: 'Auth failed. User not found'});
       } else if (user) {
-        if(user.local.password != req.body.password) {
+
+        var validPassword = user.comparePassword(req.body.password);
+        if(!validPassword) {
           res.json({ success: false, message: 'Auth failed. Wrong password.' });
         } else {
 
           console.log(user)
 
-          // var userNoPassword = {
-          //   id: user._id,
-          //   name: user.username
-          // }
-          var token = jwt.sign(user, config.secret, {
+          var userNoPassword = {
+            id: user._id,
+            name: user.username
+          }
+          var token = jwt.sign(userNoPassword , config.secret, {
                     expiresInMinutes: 5 // expires in 24 hours
           });
 
@@ -82,17 +53,40 @@ module.exports = function(app, passport) {
     });
   });
 
-  // !_!_!_! ADD LOG IN AUTH TO PROFILE ROUTE !_!_!_!
-  app.get('/api/profile', function(req, res) {
-    res.json({ user: req.user })
-  });
+  app.use('/api', function(req, res, next) {
+    var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
-  // !_!_!_! ADD LOGIN ROUTES !_!_!_!
+    if (token) {
+      jwt.verify(token, config.secret, function(err, decoded) {
+        if(err) {
+          return res.status(403).send({
+            sucess: false,
+            message: 'Token auth failed'
+          });
+        } else {
+          req.decoded = decoded;
+          next();
+        }
+      });
+    } else {
+      return res.status(403).send({
+        success: false,
+        message: 'No token provided'
+      });
+    }
+  })
 
-  // api/users Routes
+  // Facebook Auth Testing
+  app.get('/profile', passport.authenticate('bearer', { session: false }),
+    function(req, res) {
+      res.send("Logged in as " + req.user.facebook.name)
+    }
+  );
 
-  app.get('/api/users',
-   function(req, res) {
+  // API Routes
+  var apiRouter = express.Router();
+
+  apiRouter.get('/users', function(req, res) {
     User.find(function(err, users) {
       if(err) res.send(err);
 
@@ -100,14 +94,62 @@ module.exports = function(app, passport) {
     });
   });
 
-  app.post('/api/users',passport.authenticate('local-signup', {
-    successRedirect: '/api/users',
-    failureRedirect: '/',
-    failureFlash: true
-  }));
+  apiRouter.get('/users/:user_id', function(req, res) {
+      User.findById(req.params.user_id, function(err, user) {
+        if (err) res.send(err);
+        res.json(user);
+      });
+    });
 
-  // !_!_!_! ADD LOG IN AUTH TO PUT ROUTE !_!_!_!
-  app.put('/api/users/:user_id', function(req, res) {
+  apiRouter.post('/users', function(req, res) {
+
+    // find error code for dup email
+    User.find({
+      $or:[{'profile.email': req.body.email}, {'profile.username': req.body.username}]}, function(err, user) {
+
+        if (user.length > 1) {
+          if (user[0].profile.email === req.body.email && user[1].profile.username === req.body.username) {
+            res.json({ success: false, message: "This username and email have already been taken" })
+          } else if (user[1].profile.email === req.body.email && user[0].profile.username === req.body.username) {
+            res.json({ success: false, message: "This username and email have already been taken" })
+          }
+        } else if (user.length === 1) {
+          if (user[0].profile.email === req.body.email) {
+            res.json({ success: false, message: "This email has already been taken" })
+          } else if (user[0].profile.username === req.body.username) {
+            res.json({ success: false, message: "This username has already been taken" })
+          }
+        } else {
+          var user = new User();
+
+          user.profile.email = req.body.email;
+          user.profile.username = req.body.username;
+          user.profile.password = req.body.password;
+
+          user.save(function(err) {
+            if(err) {
+              if(err.code == 11000)
+                return res.json({ success: false, message: 'A user with that username already exists' });
+              else
+                return res.send(err);
+            }
+            res.redirect('/')
+          });
+        }
+
+        console.log(user)
+
+    })
+  })
+
+  // apiRouter.post('/users',passport.authenticate('local-signup', {
+  //   session: false,
+  //   successRedirect: '/',
+  //   failureRedirect: '/',
+  //   failureFlash: true
+  // }));
+
+  apiRouter.put('/users/:user_id', function(req, res) {
     User.findById(req.params.user_id, function(err, user) {
       if(err) res.send(err);
 
@@ -122,7 +164,7 @@ module.exports = function(app, passport) {
     });
   });
 
-  app.delete('/api/users/:user_id', function(req, res) {
+  apiRouter.delete('/users/:user_id', function(req, res) {
     User.remove({
       _id: req.params.user_id
     }, function(err, user) {
@@ -131,20 +173,12 @@ module.exports = function(app, passport) {
     });
   });
 
-  app.get('/api/users/:user_id', function(req, res) {
-      User.findById(req.params.user_id, function(err, user) {
-        if(err) res.send(err);
-        res.json(user);
-      });
-    });
-
   // facebook
   app.get('/auth/facebook', passport.authenticate('facebook', { session: false, scope: []}));
 
   app.get('/auth/facebook/callback',
     passport.authenticate('facebook', {
       session: false,
-      // successRedirect: '/api/profile',
       failureRedirect: '/'}),
     function(req, res) {
       console.log('!!!!' + req.user)
@@ -156,13 +190,6 @@ module.exports = function(app, passport) {
     req.logout();
     res.redirect('/');
   });
-}
 
-// route middleware to make sure a user is logged in
-function isLoggedIn(req, res, next) {
-  // if a user is authenticated in the session, then next
-  if (req.isAuthenticated())
-    return next();
-  // if they aren't, redirect them to the home page
-  res.redirect('/');
+  app.use('/api', apiRouter);
 }
