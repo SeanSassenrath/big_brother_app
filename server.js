@@ -41,8 +41,8 @@ app.use(express.static(__dirname + '/public'));
 // app.use(flash());
 
 // Routes
-var apiRoutes = require('./app/routes/user')(app, express)
-app.use('/api', apiRoutes);
+var apiUserRoutes = require('./app/routes/user')(app, express)
+app.use('/api', apiUserRoutes);
 // require('./app/routes/player.js')(app)
 // require('./app/routes/user.js')(app, passport)
 

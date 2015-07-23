@@ -1,8 +1,8 @@
-var express       = require('express');
-var app           = express();
+// var express       = require('express');
+// var app           = express();
 var Player         = require('../models/player.js')
 
-module.exports = function(app) {
+module.exports = function(app, express) {
 
   app.get('/api/players', function(req, res) {
     Player.find(function(err, users) {

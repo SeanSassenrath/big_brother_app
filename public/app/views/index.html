@@ -50,7 +50,7 @@
         <section class="top-bar-section">
           <ul class="right">
             <li ng-if="!main.loggedIn"><a href="/login" class="top-nav">Login</a></li>
-            <li ng-if="main.loggedIn"><a href="/login" class="top-nav">Logout</a></li>
+            <li ng-if="main.loggedIn" ng-click="main.doLogout()"><a href="/" class="top-nav">Logout</a></li>
             <li><a href="#" class="top-nav">SIGN UP</a></li>
             <li><a href="#" class="top-nav">CHAT</a></li>
           </ul>
