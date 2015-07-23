@@ -1,12 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>My MEAN App</title>
-</head>
-<body>
+  <meta charset="UTF-8">
+  <title>User CRM</title>
 
-HELLO!
+  <!-- FOR ANGULAR ROUTING -->
+  <base href="/">
+
+  <!-- CSS  -->
+  <!-- load bootstrap from CDN and custom CSS -->
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.2/css/foundation.min.css">
+  <link rel="stylesheet" href="assets/css/normalize.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <!-- JS -->
+  <!-- load angular and angular-route via CDN -->
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-route.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-animate.js"></script>
+
+  <!-- controllers -->
+  <script src="app/controllers/mainCtrl.js"></script>
+  <script src="app/controllers/userCtrl.js"></script>
+
+  <!-- services -->
+  <script src="app/services/authService.js"></script>
+  <script src="app/services/userService.js"></script>
+
+  <!-- main Angular app files -->
+  <script src="app/app.routes.js"></script>
+  <script src="app/app.js"></script>
+</head>
+<body ng-app="userApp" ng-controller="mainController as main">
+  <!--[if lt IE 8]>
+      <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+  <![endif]-->
+
+<!-- NAVBAR -->
+  <header>
+    <div class="contain-to-grid sticky top-nav">
+      <nav class="top-bar top-nav" data-topbar role="navigation" data-options="sticky_on: large">
+        <ul class="title-area">
+          <li class="name">
+            <h1 class="txt-white">Fantasy Big Brother</h1>
+          </li>
+          <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
+        </ul>
+
+        <section class="top-bar-section">
+          <ul class="right">
+            <li ng-if="!main.loggedIn"><a href="/login" class="top-nav">Login</a></li>
+            <li ng-if="main.loggedIn"><a href="/login" class="top-nav">Logout</a></li>
+            <li><a href="#" class="top-nav">SIGN UP</a></li>
+            <li><a href="#" class="top-nav">CHAT</a></li>
+          </ul>
+        </section>
+      </nav>
+    </div>
+  </header>
+
+  <header>
+    <div class="navbar navbar-inverse" ng-if="main.loggedIn">
+    <div class="container">
+      <div class="navbar-header">
+        <a href="/" class="navbar-brand"><span class="glyphicon glyphicon-fire text-danger"></span> User CRM</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="/users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li ng-if="!main.loggedIn"><a href="/login">Login</a></li>
+        <li ng-if="main.loggedIn" class="navbar-text">Hello {{ main.user.username }}!</li>
+        <li ng-if="main.loggedIn"><a href="#" ng-click="main.doLogout()">Logout</a></li>
+      </ul>
+    </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- ANGULAR VIEWS -->
+    <div ng-view></div>
+  </main>
 
 </body>
 </html>

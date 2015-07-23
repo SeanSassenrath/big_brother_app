@@ -6,7 +6,7 @@ var User          = require('../models/user.js');
 var config        = require('../../config/settings.js')
 var BearerStrategy    = require('passport-http-bearer').Strategy;
 
-module.exports = function(app, passport) {
+module.exports = function(app, express) {
 
   // Routes
 
@@ -33,7 +33,7 @@ module.exports = function(app, passport) {
 
           var userNoPassword = {
             id: user._id,
-            name: user.username
+            username: user.profile.username
           }
           var token = jwt.sign(userNoPassword , config.secret, {
                     expiresInMinutes: 5 // expires in 24 hours
@@ -77,11 +77,11 @@ module.exports = function(app, passport) {
   })
 
   // Facebook Auth Testing
-  app.get('/profile', passport.authenticate('bearer', { session: false }),
-    function(req, res) {
-      res.send("Logged in as " + req.user.facebook.name)
-    }
-  );
+  // app.get('/fbprofile', passport.authenticate('bearer', { session: false }),
+  //   function(req, res) {
+  //     res.send("Logged in as " + req.user.facebook.name)
+  //   }
+  // );
 
   // API Routes
   var apiRouter = express.Router();
@@ -100,6 +100,10 @@ module.exports = function(app, passport) {
         res.json(user);
       });
     });
+
+  apiRouter.get('/me', function(req, res) {
+    res.send(req.decoded);
+  });
 
   apiRouter.post('/users', function(req, res) {
 
@@ -174,22 +178,22 @@ module.exports = function(app, passport) {
   });
 
   // facebook
-  app.get('/auth/facebook', passport.authenticate('facebook', { session: false, scope: []}));
+  // app.get('/auth/facebook', passport.authenticate('facebook', { session: false, scope: []}));
 
-  app.get('/auth/facebook/callback',
-    passport.authenticate('facebook', {
-      session: false,
-      failureRedirect: '/'}),
-    function(req, res) {
-      console.log('!!!!' + req.user)
-      res.redirect("/profile?access_token=" + req.user.facebook.token);
-    }
-  );
+  // app.get('/auth/facebook/callback',
+  //   passport.authenticate('facebook', {
+  //     session: false,
+  //     failureRedirect: '/'}),
+  //   function(req, res) {
+  //     console.log('!!!!' + req.user)
+  //     res.redirect("/profile?access_token=" + req.user.facebook.token);
+  //   }
+  // );
 
-  app.get('/logout', function(req, res) {
-    req.logout();
-    res.redirect('/');
-  });
+  // app.get('/logout', function(req, res) {
+  //   req.logout();
+  //   res.redirect('/');
+  // });
 
-  app.use('/api', apiRouter);
+  return apiRouter
 }

@@ -11,13 +11,11 @@ var flash         = require('connect-flash');
 var cookieParser  = require('cookie-parser');
 var session       = require('express-session')
 
-mongoose.connect(config.database)
-
 // Configure Passport
-require('./config/passport')(passport);
+// require('./config/passport')(passport);
 
 // Configuration
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // CORS Configuration
@@ -31,15 +29,22 @@ app.use(function(req, res, next) {
 // Log all requests to console
 app.use(morgan('dev'));
 
+mongoose.connect(config.database)
+
+// set static files location
+app.use(express.static(__dirname + '/public'));
+
 // Required for Passport
-app.use(session({ secret: config.secret }));
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(flash());
+// app.use(session({ secret: config.secret }));
+// app.use(passport.initialize());
+// app.use(passport.session());
+// app.use(flash());
 
 // Routes
-require('./app/routes/player.js')(app)
-require('./app/routes/user.js')(app, passport)
+var apiRoutes = require('./app/routes/user')(app, express)
+app.use('/api', apiRoutes);
+// require('./app/routes/player.js')(app)
+// require('./app/routes/user.js')(app, passport)
 
 // MAIN CATCHALL ROUTE - SEND USERS TO ANGULAR
 app.get('*', function(req, res) {

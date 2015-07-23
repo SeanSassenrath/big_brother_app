@@ -1,1 +1,188 @@
-style.css
+body {
+    background-color: white;
+}
+
+.debug {
+    border: 2px solid red;
+}
+
+/*#slideshow #slideshowWindow {
+    width:100%;
+    height:auto;
+    margin:0;
+    padding:0;
+    position:relative;
+}*/
+
+.top-nav {
+    /*background-color: #2F2F47 !important;*/
+}
+
+.top-nav-txt {
+    color: white !important;
+}
+
+.hero {
+    height: 400px;
+    background-image: url("../img/bbhouse.jpg");
+}
+
+.signup {
+    background-color: #0079a3;
+    text-align: center;
+    color: white;
+    height: 5em;
+}
+
+.signup-txt {
+    color: white;
+    padding-top: .4em;
+    margin: 0px;
+}
+
+.intro {
+    text-align: center;
+}
+
+.intro h4 {
+    padding-top: 30px;
+}
+
+.fake-ad {
+    height: 15em;
+}
+
+footer {
+    background-color: #021620;
+}
+
+/*SPACING*/
+
+.p-md {
+    padding-top: 2em;
+    padding-bottom: 2em;
+}
+
+.p-md-top {
+    padding-top: 2em;
+}
+
+.p-sm {
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+.p-xsm {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.m-sm-bottom {
+    margin-bottom: 2em;
+}
+
+.m-zero-bottom {
+    margin-bottom: 0px;
+}
+
+.m-zero {
+    margin: 0px;
+}
+
+/*TEXT*/
+
+.txt-white {
+    color: white;
+}
+
+.txt-off-white {
+    color: #d9d9d9;
+}
+
+.txt-gray {
+    color: #999999;
+}
+
+.txt-blue {
+    color: #0079a3;
+}
+
+.txt-purple {
+    color: #730073;
+}
+
+.txt-red {
+    color: #CC0000;
+}
+
+.txt-center {
+    text-align: center;
+}
+
+img.desaturate { -webkit-filter: grayscale(100%); filter: grayscale(100%); }
+
+/*BACKGROUNDS*/
+
+.bkg-blue {
+    background-color: #0079a3;
+}
+
+.bkg-red {
+    background-color: #CC0000;
+}
+
+.bkg-purple {
+    background-color: #730073;
+}
+
+.bkg-gray {
+    background-color: #999999;
+}
+
+/*HOVERS*/
+
+.hoh-bkg:hover {
+    background-color: #0079a3;
+}
+
+.nom-bkg:hover {
+    background-color: #999999;
+}
+
+.pov-bkg:hover {
+    background-color: #730073;
+}
+
+.out-bkg:hover {
+    background-color: #CC0000;
+}
+
+.choice-txt:hover {
+    color: white
+}
+/*BORDERS*/
+
+.bord-m-bottom {
+    margin-bottom: 1em;
+}
+
+.bord-gray {
+    border: solid #999999;
+}
+
+.bord-purple {
+    border: solid #730073;
+}
+
+.bord-red {
+    border: solid #CC0000;
+}
+
+.bord-blue {
+    border: solid #0079a3;
+}
+
+/*OTHER*/
+.click {
+    cursor: pointer;
+}
