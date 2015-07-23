@@ -43,6 +43,8 @@ module.exports = function(app, express) {
           //   expiresInMinutes: 2//43800 // 730 hours, about a month
           // });
 
+          console.log('token issued')
+
           res.json({
             success: true,
             message: 'Token issued',
