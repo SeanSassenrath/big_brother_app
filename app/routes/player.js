@@ -4,7 +4,10 @@ var Player         = require('../models/player.js')
 
 module.exports = function(app, express) {
 
-  app.get('/api/players', function(req, res) {
+  // API Routes
+  var apiPlayerRouter = express.Router();
+
+  apiPlayerRouter.get('/players', function(req, res) {
     Player.find(function(err, users) {
       if(err) res.send(err);
 
@@ -12,15 +15,30 @@ module.exports = function(app, express) {
     });
   });
 
-  app.get('/api/players/:player_id', function(req, res) {
+  apiPlayerRouter.get('/players/:player_id', function(req, res) {
       Player.findById(req.params.player_id, function(err, player) {
         if(err) res.send(err);
         res.json(player);
       });
     });
 
+  apiPlayerRouter.get('/current_title_holders', function(req, res) {
+    Player.find({
+      $or:[{'title': 'NOM'}, {'title': 'POV'}, {'title': 'OUT'}]}, function(err, player) {
+        console.log(player)
+
+        res.json(player)
+      })
+  });
+
+  apiPlayerRouter.get('/current_season', function(req, res) {
+    Player.find({season: 17}, function(err, player) {
+      res.json(player)
+    })
+  })
+
   // !_!_!_! ADD LOG IN AUTH TO POST ROUTE !_!_!_!
-  app.post('/api/players', function(req, res) {
+  apiPlayerRouter.post('/players', function(req, res) {
     var player = new Player();
 
     player.name     = req.body.name
@@ -38,7 +56,7 @@ module.exports = function(app, express) {
   });
 
   // !_!_!_! ADD LOG IN AUTH TO PUT ROUTE !_!_!_!
-  app.put('/api/players/:player_id', function(req, res) {
+  apiPlayerRouter.put('/players/:player_id', function(req, res) {
     Player.findById(req.params.player_id, function(err, player) {
       if(err) res.send(err);
 
@@ -57,7 +75,7 @@ module.exports = function(app, express) {
     });
   });
 
-  app.delete('/api/players/:player_id', function(req, res) {
+  apiPlayerRouter.delete('/players/:player_id', function(req, res) {
     Player.remove({
       _id: req.params.player_id
     }, function(err, player) {
@@ -66,4 +84,6 @@ module.exports = function(app, express) {
     });
   });
 
-};
+  return apiPlayerRouter
+
+}

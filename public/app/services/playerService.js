@@ -4,31 +4,41 @@ angular.module('playerService', [])
 
   var playerFactory = {};
 
-  // get a single user
-  userFactory.get = function() {
+  // get a single player
+  playerFactory.get = function() {
     return $http.get('/api/profile');
   };
 
-  // get all users
-  userFactory.get = function() {
-    return $http.get('/api/users');
+  // get all players
+  playerFactory.get = function() {
+    return $http.get('/api/players');
   };
 
-  // create a user
-  userFactory.create = function(userData) {
-    return $http.post('/api/users/', userData);
+  // get current title holder players
+  playerFactory.get = function() {
+    return $http.get('/api/current_title_holders');
   };
 
-  // update a user
-  userFactory.update = function(id, userData) {
-    return $http.put('/api/users' + id, userData);
+  // get current season players
+  playerFactory.get = function() {
+    return $http.get('/api/current_season');
   };
 
-  // delete a user
-  userFactory.update = function(id) {
-    return $http.delete('/api/users' + id);
+  // create a player
+  playerFactory.create = function(playerData) {
+    return $http.post('/api/players/', playerData);
   };
 
-  return userFactory;
+  // update a player
+  playerFactory.update = function(id, playerData) {
+    return $http.put('/api/players' + id, playerData);
+  };
+
+  // delete a player
+  playerFactory.update = function(id) {
+    return $http.delete('/api/players' + id);
+  };
+
+  return playerFactory;
 
 });

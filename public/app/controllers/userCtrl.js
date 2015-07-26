@@ -4,3 +4,5 @@ angular.module('userCtrl', ['userService'])
   var vm = this;
 
 })
+
+.controller('userCreateController', function(user))
