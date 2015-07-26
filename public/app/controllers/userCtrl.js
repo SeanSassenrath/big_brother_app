@@ -1,8 +1,8 @@
 angular.module('userCtrl', ['userService'])
 
-.controller('userController', function(user) {
-  var vm = this;
+// .controller('userController', function(user) {
+//   var vm = this;
 
-})
+// })
 
-.controller('userCreateController', function(user))
+// .controller('userCreateController', function(user))
